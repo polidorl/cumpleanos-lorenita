@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>¡Feliz Cumpleaños, Lorenita! 🎉</title>
+
+  <!-- Tipografías festivas y modernas desde Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Quicksand:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Tailwind CSS v3 vía CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            festive: ['"Great Vibes"', 'cursive'],
+            sans: ['"Quicksand"', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            champagne: '#F9E8C9',
+            gold: {
+              300: '#F5D487',
+              400: '#E8B954',
+              500: '#D4A037',
+            },
+            blush: {
+              100: '#FFF0F5',
+              200: '#FFD6E7',
+              300: '#FFB3D1',
+              400: '#FF85B3',
+            },
+          },
+        },
+      },
+    };
+  </script>
+
+  <!-- Librería canvas-confetti vía CDN -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"
+    defer
+  ></script>
+
+  <style>
+    /* =========================================================
+       FONDO BOKEH PASTEL Y DORADO + ANIMACIONES PERSONALIZADAS
+       ========================================================= */
+    :root {
+      --bg-gradient: radial-gradient(circle at 20% 20%, #fff6eb 0%, #ffe6f0 42%, #f5e6ff 75%, #fff3d6 100%);
+    }
+
+    body {
+      background: var(--bg-gradient);
+      min-height: 100dvh;
+      overflow-x: hidden;
+    }
+
+    /* Partículas Bokeh suaves */
+    .bokeh-orb {
+      position: absolute;
+      border-radius: 9999px;
+      filter: blur(28px);
+      opacity: 0.55;
+      pointer-events: none;
+      will-change: transform, opacity;
+      animation: bokehFloat var(--dur, 14s) ease-in-out infinite alternate;
+      animation-delay: var(--delay, 0s);
+    }
+
+    @keyframes bokehFloat {
+      0% {
+        transform: translate3d(0, 0, 0) scale(1);
+        opacity: 0.42;
+      }
+      50% {
+        opacity: 0.72;
+      }
+      100% {
+        transform: translate3d(var(--tx, 25px), var(--ty, -35px), 0) scale(1.18);
+        opacity: 0.48;
+      }
+    }
+
+    /* Animación de la caja de regalo en bienvenida */
+    @keyframes giftFloat {
+      0%, 100% {
+        transform: translateY(0) rotate(0deg);
+      }
+      25% {
+        transform: translateY(-8px) rotate(-1.5deg);
+      }
+      75% {
+        transform: translateY(-4px) rotate(1.5deg);
+      }
+    }
+
+    @keyframes lidWiggle {
+      0%, 82%, 100% {
+        transform: rotate(0deg) translateY(0);
+      }
+      86% {
+        transform: rotate(-5deg) translateY(-4px);
+      }
+      90% {
+        transform: rotate(5deg) translateY(-4px);
+      }
+      94% {
+        transform: rotate(-3deg) translateY(-2px);
+      }
+    }
+
+    .gift-animate {
+      animation: giftFloat 3.6s ease-in-out infinite;
+    }
+
+    .gift-lid {
+      transform-origin: center bottom;
+      animation: lidWiggle 3.2s ease-in-out infinite;
+    }
+
+    /* Resplandor giratorio del marco fotográfico */
+    @keyframes shimmerSpin {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .photo-glow-ring {
+      background: conic-gradient(
+        from 0deg,
+        #f5d487,
+        #ffb3d1,
+        #fff4d2,
+        #d8b4fe,
+        #e8b954,
+        #f5d487
+      );
+      animation: shimmerSpin 8s linear infinite;
+    }
+
+    /* Globos flotando suavemente hacia arriba */
+    @keyframes balloonRise {
+      0% {
+        transform: translateY(18px) translateX(0) rotate(-3deg);
+      }
+      50% {
+        transform: translateY(-14px) translateX(6px) rotate(3deg);
+      }
+      100% {
+        transform: translateY(18px) translateX(0) rotate(-3deg);
+      }
+    }
+
+    .balloon-float {
+      animation: balloonRise var(--b-dur, 6s) ease-in-out infinite;
+      animation-delay: var(--b-delay, 0s);
+      will-change: transform;
+    }
+
+    /* Serpentinas y papelillos decorativos */
+    @keyframes streamerSway {
+      0%, 100% {
+        transform: rotate(-6deg) translateY(0);
+      }
+      50% {
+        transform: rotate(6deg) translateY(-6px);
+      }
+    }
+
+    .streamer-sway {
+      animation: streamerSway 4.5s ease-in-out infinite;
+      transform-origin: top center;
+    }
+
+    /* Entrada suave de la tarjeta principal */
+    @keyframes cardReveal {
+      0% {
+        opacity: 0;
+        transform: scale(0.92) translateY(28px);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    .animate-card-reveal {
+      animation: cardReveal 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    /* Pulso de clic en foto */
+    @keyframes popBounce {
+      0% { transform: scale(1); }
+      40% { transform: scale(1.07); }
+      100% { transform: scale(1); }
+    }
+
+    .pop-bounce {
+      animation: popBounce 0.38s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    /* Accesibilidad: reducir movimiento si el usuario lo prefiere */
+    @media (prefers-reduced-motion: reduce) {
+      .bokeh-orb,
+      .gift-animate,
+      .gift-lid,
+      .photo-glow-ring,
+      .balloon-float,
+      .streamer-sway {
+        animation: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="font-sans text-slate-700 antialiased selection:bg-blush-200 selection:text-rose-900 relative">
+
+  <!-- =========================================================
+       CAPA DE FONDO BOKEH PASTEL Y DORADO
+       ========================================================= -->
+  <div aria-hidden="true" class="fixed inset-0 overflow-hidden pointer-events-none z-0">
+    <span class="bokeh-orb w-56 h-56 bg-gold-300/70 top-[-4%] left-[-6%]" style="--dur: 13s; --tx: 35px; --ty: 30px;"></span>
+    <span class="bokeh-orb w-72 h-72 bg-blush-300/60 top-[15%] right-[-8%]" style="--dur: 16s; --delay: -3s; --tx: -30px; --ty: 25px;"></span>
+    <span class="bokeh-orb w-64 h-64 bg-purple-200/70 bottom-[10%] left-[8%]" style="--dur: 15s; --delay: -6s; --tx: 25px; --ty: -40px;"></span>
+    <span class="bokeh-orb w-48 h-48 bg-amber-200/80 bottom-[-5%] right-[12%]" style="--dur: 12s; --delay: -2s; --tx: -20px; --ty: -30px;"></span>
+    <span class="bokeh-orb w-40 h-40 bg-rose-200/70 top-[48%] left-[42%]" style="--dur: 18s; --delay: -5s; --tx: 20px; --ty: -25px;"></span>
+    <span class="bokeh-orb w-28 h-28 bg-yellow-200/80 top-[28%] left-[18%]" style="--dur: 10s; --delay: -1s; --tx: 15px; --ty: -20px;"></span>
+  </div>
+
+  <!-- =========================================================
+       CONTROL DE AUDIO DISCRETO (ESQUINA SUPERIOR DERECHA)
+       ========================================================= -->
+  <button
+    id="audioToggleBtn"
+    type="button"
+    aria-label="Silenciar música de cumpleaños"
+    aria-pressed="false"
+    class="hidden fixed top-4 right-4 z-50 flex items-center gap-2 rounded-full bg-white/80 backdrop-blur-md border border-gold-300/70 px-3.5 py-2 text-xs sm:text-sm font-semibold text-amber-900 shadow-lg shadow-amber-900/10 transition-all duration-200 hover:bg-white hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-500 focus-visible:ring-offset-2"
+  >
+    <!-- Icono Sonido Activo -->
+    <svg id="iconSoundOn" class="w-4 h-4 sm:w-5 sm:h-5 text-gold-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+      <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+      <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+    </svg>
+    <!-- Icono Silenciado -->
+    <svg id="iconSoundOff" class="hidden w-4 h-4 sm:w-5 sm:h-5 text-rose-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+      <line x1="23" y1="9" x2="17" y2="15"></line>
+      <line x1="17" y1="9" x2="23" y2="15"></line>
+    </svg>
+    <span id="audioLabel" class="hidden sm:inline">Música</span>
+  </button>
+
+  <main class="relative z-10 min-h-dvh w-full flex items-center justify-center px-4 py-3 sm:px-6 sm:py-4">
+
+    <!-- =========================================================
+         1. PANTALLA DE BIENVENIDA (ESTADO INICIAL - CAJA DE REGALO)
+         ========================================================= -->
+    <section
+      id="welcomeScreen"
+      aria-label="Bienvenida sorpresa para Lorenita"
+      class="w-full max-w-md text-center flex flex-col items-center justify-center transition-all duration-700 ease-out"
+    >
+      <div class="bg-white/75 backdrop-blur-xl border border-white/80 rounded-3xl p-8 sm:p-10 shadow-2xl shadow-rose-900/10 w-full">
+        <p class="text-xs sm:text-sm uppercase tracking-[0.22em] font-bold text-gold-500 mb-3">
+          Tienes una sorpresa especial
+        </p>
+
+        <!-- Caja de regalo ilustrada en SVG con animación -->
+        <div class="gift-animate mx-auto my-4 w-40 h-40 sm:w-44 sm:h-44 flex items-center justify-center" aria-hidden="true">
+          <svg viewBox="0 0 180 180" class="w-full h-full drop-shadow-xl">
+            <defs>
+              <linearGradient id="boxBodyGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#FF9EC4" />
+                <stop offset="100%" stop-color="#F472B6" />
+              </linearGradient>
+              <linearGradient id="boxLidGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#FFB8D4" />
+                <stop offset="100%" stop-color="#EC4899" />
+              </linearGradient>
+              <linearGradient id="goldRibbon" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#FDE68A" />
+                <stop offset="50%" stop-color="#E8B954" />
+                <stop offset="100%" stop-color="#CA8A04" />
+              </linearGradient>
+            </defs>
+
+            <!-- Sombra base -->
+            <ellipse cx="90" cy="162" rx="54" ry="8" fill="#BE185D" opacity="0.14" />
+
+            <!-- Cuerpo de la caja -->
+            <rect x="34" y="76" width="112" height="82" rx="12" fill="url(#boxBodyGrad)" />
+            <!-- Cinta vertical -->
+            <rect x="79" y="76" width="22" height="82" fill="url(#goldRibbon)" />
+            <!-- Brillo lateral -->
+            <rect x="42" y="84" width="10" height="64" rx="5" fill="#FFFFFF" opacity="0.22" />
+
+            <!-- Tapa + moño animado -->
+            <g class="gift-lid">
+              <!-- Lazo izquierdo -->
+              <path d="M90 54 C68 20, 38 34, 52 54 C60 64, 78 60, 90 54 Z" fill="url(#goldRibbon)" />
+              <!-- Lazo derecho -->
+              <path d="M90 54 C112 20, 142 34, 128 54 C120 64, 102 60, 90 54 Z" fill="url(#goldRibbon)" />
+              <!-- Tapa -->
+              <rect x="26" y="54" width="128" height="28" rx="9" fill="url(#boxLidGrad)" />
+              <!-- Cinta en tapa -->
+              <rect x="79" y="54" width="22" height="28" fill="url(#goldRibbon)" />
+              <!-- Nudo central -->
+              <circle cx="90" cy="54" r="9" fill="#F5D487" stroke="#D4A037" stroke-width="2" />
+            </g>
+
+            <!-- Estrellitas mágicas -->
+            <path d="M24 40 L27 47 L34 50 L27 53 L24 60 L21 53 L14 50 L21 47 Z" fill="#E8B954" />
+            <path d="M156 32 L158 37 L163 39 L158 41 L156 46 L154 41 L149 39 L154 37 Z" fill="#F472B6" />
+            <circle cx="152" cy="112" r="3.5" fill="#FDE68A" />
+          </svg>
+        </div>
+
+        <h1 class="font-festive text-4xl sm:text-5xl text-rose-500 mb-2">
+          Para Lorenita
+        </h1>
+        <p class="text-sm sm:text-base text-slate-600 mb-7">
+          Sube un poquito el volumen y toca el botón para descubrir tu tarjeta.
+        </p>
+
+        <button
+          id="openSurpriseBtn"
+          type="button"
+          class="group relative inline-flex items-center justify-center gap-2 w-full sm:w-auto px-7 py-4 rounded-full font-bold text-base sm:text-lg text-white bg-gradient-to-r from-rose-400 via-pink-500 to-amber-400 shadow-xl shadow-rose-400/35 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-rose-400/45 active:scale-95 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-rose-300"
+        >
+          <span>¡Abrir mi sorpresa, Lorenita!</span>
+          <span aria-hidden="true" class="transition-transform duration-300 group-hover:translate-x-1">🎁</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         2. ESCENARIO PRINCIPAL DE LA TARJETA DE CUMPLEAÑOS
+         ========================================================= -->
+    <article
+      id="birthdayCard"
+      aria-label="Tarjeta de feliz cumpleaños para Lorenita"
+      class="hidden relative w-full max-w-xl"
+    >
+      <!-- Serpentinas superiores decorativas -->
+      <div aria-hidden="true" class="pointer-events-none absolute -top-4 inset-x-0 flex justify-between px-4 sm:px-8 z-20">
+        <svg class="w-10 h-14 streamer-sway" viewBox="0 0 48 64" fill="none">
+          <path d="M12 0 C22 14, 4 26, 16 40 C24 50, 12 58, 18 64" stroke="#E8B954" stroke-width="3.5" stroke-linecap="round" />
+          <circle cx="34" cy="18" r="3.5" fill="#FF85B3" />
+          <rect x="28" y="34" width="7" height="4" rx="2" transform="rotate(28 28 34)" fill="#C084FC" />
+        </svg>
+        <svg class="w-10 h-14 streamer-sway" style="animation-delay: -1.6s;" viewBox="0 0 48 64" fill="none">
+          <path d="M36 0 C26 14, 44 26, 32 40 C24 50, 36 58, 30 64" stroke="#FF85B3" stroke-width="3.5" stroke-linecap="round" />
+          <circle cx="14" cy="20" r="3.5" fill="#E8B954" />
+          <rect x="10" y="38" width="7" height="4" rx="2" transform="rotate(-24 10 38)" fill="#60A5FA" />
+        </svg>
+      </div>
+
+      <!-- Contenedor Glassmorphism principal (padding vertical reducido) -->
+      <div class="relative overflow-hidden bg-white/80 backdrop-blur-xl border-2 border-gold-300/60 rounded-[2rem] px-5 py-5 sm:px-8 sm:py-6 shadow-2xl shadow-amber-900/10 text-center">
+
+        <!-- Papelillos de fondo sutiles -->
+        <div aria-hidden="true" class="pointer-events-none absolute inset-0 overflow-hidden opacity-60">
+          <span class="absolute top-6 left-8 w-2.5 h-2.5 rounded-full bg-gold-400"></span>
+          <span class="absolute top-14 right-10 w-3 h-1.5 rounded-full bg-blush-400 rotate-45"></span>
+          <span class="absolute bottom-20 left-8 w-3 h-1.5 rounded-full bg-purple-300 -rotate-12"></span>
+          <span class="absolute bottom-14 right-8 w-2.5 h-2.5 rounded-full bg-amber-300"></span>
+        </div>
+
+        <!-- =========================================================
+             3. MARCO FOTOGRÁFICO FESTIVO (FOTO MÁS GRANDE)
+             ========================================================= -->
+        <header class="relative flex flex-col items-center justify-center mb-3">
+          <div class="relative flex items-center justify-center w-full max-w-[350px] sm:max-w-[430px] pt-1">
+
+            <!-- Globo izquierdo (Rosa Pastel) -->
+            <div aria-hidden="true" class="balloon-float absolute -left-2 sm:left-0 top-4 w-12 sm:w-14 pointer-events-none" style="--b-dur: 5.8s; --b-delay: -0.6s;">
+              <svg viewBox="0 0 64 115" class="w-full h-auto drop-shadow-md">
+                <defs>
+                  <radialGradient id="balPink" cx="35%" cy="30%" r="65%">
+                    <stop offset="0%" stop-color="#FFE4EF" />
+                    <stop offset="55%" stop-color="#FF8EC0" />
+                    <stop offset="100%" stop-color="#E11D74" />
+                  </radialGradient>
+                </defs>
+                <path d="M32 68 Q26 85 35 98 T30 114" stroke="#D4A037" stroke-width="1.6" fill="none" stroke-linecap="round" />
+                <ellipse cx="32" cy="34" rx="24" ry="30" fill="url(#balPink)" />
+                <polygon points="28,63 36,63 32,69" fill="#E11D74" />
+                <ellipse cx="22" cy="22" rx="4.5" ry="9" transform="rotate(-22 22 22)" fill="#FFFFFF" opacity="0.5" />
+              </svg>
+            </div>
+
+            <!-- Globo izquierdo secundario (Dorado) -->
+            <div aria-hidden="true" class="balloon-float absolute left-4 sm:left-7 -top-2 w-9 sm:w-10 pointer-events-none" style="--b-dur: 6.6s; --b-delay: -2.2s;">
+              <svg viewBox="0 0 64 115" class="w-full h-auto drop-shadow-sm">
+                <defs>
+                  <radialGradient id="balGold" cx="35%" cy="30%" r="65%">
+                    <stop offset="0%" stop-color="#FFFBEB" />
+                    <stop offset="55%" stop-color="#F5D487" />
+                    <stop offset="100%" stop-color="#CA8A04" />
+                  </radialGradient>
+                </defs>
+                <path d="M32 68 Q38 86 29 102" stroke="#D4A037" stroke-width="1.5" fill="none" />
+                <ellipse cx="32" cy="34" rx="22" ry="28" fill="url(#balGold)" />
+                <polygon points="28,61 36,61 32,67" fill="#CA8A04" />
+                <ellipse cx="23" cy="22" rx="4" ry="8" transform="rotate(-20 23 22)" fill="#FFFFFF" opacity="0.55" />
+              </svg>
+            </div>
+
+            <!-- Marco Circular Agrandado (w-52 h-52 en móvil, w-60 h-60 en escritorio) -->
+            <figure class="relative z-10 flex flex-col items-center">
+              <div
+                id="photoFrameBtn"
+                role="button"
+                tabindex="0"
+                aria-label="Foto de Lorenita. Haz clic para lanzar confeti"
+                title="¡Toca la foto para lanzar confeti!"
+                class="group relative w-52 h-52 sm:w-60 sm:h-60 rounded-full p-[6px] cursor-pointer shadow-xl shadow-rose-300/45 transition-transform duration-300 hover:scale-105 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-gold-400"
+              >
+                <span aria-hidden="true" class="photo-glow-ring absolute inset-0 rounded-full"></span>
+
+                <div class="relative w-full h-full rounded-full overflow-hidden bg-blush-100 ring-4 ring-white">
+                  <!--
+                    ========================================================================
+                    FOTO DE LORENITA:
+                    Asegúrate de que "image_f731fe.png" esté en la misma carpeta que este
+                    archivo index.html, o actualiza la ruta si está en otra carpeta.
+                    ========================================================================
+                  -->
+                  <img
+                    id="lorenitaPhoto"
+                    src="assets/foto/Lorenita_2026-11-19.png"
+                    alt="Retrato festivo de Lorenita"
+                    width="240"
+                    height="240"
+                    class="w-full h-full object-cover object-[35%_25%] transition-transform duration-500 group-hover:scale-105"
+                  />
+                </div>
+
+                <span
+                  aria-hidden="true"
+                  class="absolute bottom-1 right-2 w-9 h-9 rounded-full bg-gradient-to-br from-gold-300 to-gold-500 text-white flex items-center justify-center shadow-md ring-2 ring-white text-base"
+                >
+                  ✨
+                </span>
+              </div>
+              <figcaption class="mt-1.5 text-xs font-medium text-amber-800/75">
+                Toca la foto para celebrar 🎊
+              </figcaption>
+            </figure>
+
+            <!-- Globo derecho (Lavanda Pastel) -->
+            <div aria-hidden="true" class="balloon-float absolute -right-2 sm:right-0 top-3 w-12 sm:w-14 pointer-events-none" style="--b-dur: 6.2s; --b-delay: -1.4s;">
+              <svg viewBox="0 0 64 115" class="w-full h-auto drop-shadow-md">
+                <defs>
+                  <radialGradient id="balLav" cx="35%" cy="30%" r="65%">
+                    <stop offset="0%" stop-color="#F5F3FF" />
+                    <stop offset="55%" stop-color="#C4B5FD" />
+                    <stop offset="100%" stop-color="#8B5CF6" />
+                  </radialGradient>
+                </defs>
+                <path d="M32 68 Q38 85 29 99 T34 114" stroke="#D4A037" stroke-width="1.6" fill="none" stroke-linecap="round" />
+                <ellipse cx="32" cy="34" rx="24" ry="30" fill="url(#balLav)" />
+                <polygon points="28,63 36,63 32,69" fill="#8B5CF6" />
+                <ellipse cx="22" cy="22" rx="4.5" ry="9" transform="rotate(-22 22 22)" fill="#FFFFFF" opacity="0.5" />
+              </svg>
+            </div>
+
+            <!-- Globo derecho secundario (Melocotón/Coral suave) -->
+            <div aria-hidden="true" class="balloon-float absolute right-4 sm:right-7 -top-2 w-9 sm:w-10 pointer-events-none" style="--b-dur: 5.4s; --b-delay: -3.1s;">
+              <svg viewBox="0 0 64 115" class="w-full h-auto drop-shadow-sm">
+                <defs>
+                  <radialGradient id="balPeach" cx="35%" cy="30%" r="65%">
+                    <stop offset="0%" stop-color="#FFF7ED" />
+                    <stop offset="55%" stop-color="#FDBA74" />
+                    <stop offset="100%" stop-color="#F97316" />
+                  </radialGradient>
+                </defs>
+                <path d="M32 68 Q26 86 35 102" stroke="#D4A037" stroke-width="1.5" fill="none" />
+                <ellipse cx="32" cy="34" rx="22" ry="28" fill="url(#balPeach)" />
+                <polygon points="28,61 36,61 32,67" fill="#F97316" />
+                <ellipse cx="23" cy="22" rx="4" ry="8" transform="rotate(-20 23 22)" fill="#FFFFFF" opacity="0.55" />
+              </svg>
+            </div>
+          </div>
+        </header>
+
+        <!-- =========================================================
+             4. MENSAJE Y CELEBRACIÓN INTERACTIVA (COMPACTO)
+             ========================================================= -->
+        <section class="relative z-10 space-y-3">
+          <h1 class="font-festive text-4xl sm:text-5xl leading-tight bg-gradient-to-r from-rose-500 via-amber-500 to-pink-500 bg-clip-text text-transparent drop-shadow-sm">
+            ¡Feliz Cumpleaños, Lorenita!
+          </h1>
+
+          <div aria-hidden="true" class="flex items-center justify-center gap-3">
+            <span class="h-px w-12 bg-gradient-to-r from-transparent to-gold-400"></span>
+            <span class="text-gold-500 text-xs">✦</span>
+            <span class="h-px w-12 bg-gradient-to-l from-transparent to-gold-400"></span>
+          </div>
+
+          <div class="bg-gradient-to-br from-blush-100/80 via-white/75 to-champagne/60 border border-gold-300/45 rounded-2xl p-3.5 sm:p-4 shadow-inner">
+            <p class="text-slate-700 text-sm sm:text-base leading-snug font-medium">
+              Que este nuevo año de vida llegue cargado de sonrisas luminosas, sueños cumplidos y muchos éxitos en tus estudios. Nunca pierdas esa forma de ser tan bonita, amable y sencilla, con ese corazón enorme que ilumina a todos. ¡Feliz cumpleaños, Lorenita!
+            </p>
+            <p class="mt-2 text-xs sm:text-sm font-bold text-rose-500 tracking-wide">
+              Con todo nuestro cariño 💖
+            </p>
+          </div>
+
+          <!-- Botón más arriba y siempre visible -->
+          <div class="pt-1">
+            <button
+              id="confettiBtn"
+              type="button"
+              class="inline-flex items-center justify-center gap-2 px-6 py-2.5 sm:py-3 rounded-full font-bold text-sm sm:text-base text-white bg-gradient-to-r from-amber-400 via-rose-400 to-pink-500 shadow-lg shadow-rose-400/30 transition-all duration-200 hover:scale-105 hover:shadow-xl hover:shadow-rose-400/40 active:scale-95 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-gold-300"
+            >
+              <span aria-hidden="true">🎉</span>
+              <span>¡Lanzar más confeti!</span>
+            </button>
+          </div>
+        </section>
+
+        <footer class="relative z-10 mt-4 text-xs text-slate-500/80 font-medium">
+          Hecho con mucho cariño para celebrar tu día ✨
+        </footer>
+      </div>
+    </article>
+  </main>
+
+  <!-- =========================================================
+       LÓGICA ES6+: WEB AUDIO API + CONFETI + TRANSICIONES
+       ========================================================= -->
+  <script>
+    (() => {
+      'use strict';
+
+      // Referencias del DOM
+      const welcomeScreen = document.getElementById('welcomeScreen');
+      const birthdayCard = document.getElementById('birthdayCard');
+      const openSurpriseBtn = document.getElementById('openSurpriseBtn');
+      const confettiBtn = document.getElementById('confettiBtn');
+      const photoFrameBtn = document.getElementById('photoFrameBtn');
+      const audioToggleBtn = document.getElementById('audioToggleBtn');
+      const iconSoundOn = document.getElementById('iconSoundOn');
+      const iconSoundOff = document.getElementById('iconSoundOff');
+      const audioLabel = document.getElementById('audioLabel');
+
+      // =========================================================
+      // 1. SINTETIZADOR "CUMPLEAÑOS FELIZ" CON WEB AUDIO API
+      // =========================================================
+      const NOTE_FREQ = {
+        G4: 392.00,
+        A4: 440.00,
+        B4: 493.88,
+        C5: 523.25,
+        D5: 587.33,
+        E5: 659.25,
+        F5: 698.46,
+        G5: 783.99,
+      };
+
+      // Partitura: [nota, duración en pulsos]
+      const HAPPY_BIRTHDAY_MELODY = [
+        // Cum-ple-a-ños fe-liz
+        ['G4', 0.75], ['G4', 0.25], ['A4', 1], ['G4', 1], ['C5', 1], ['B4', 2],
+        // Cum-ple-a-ños fe-liz
+        ['G4', 0.75], ['G4', 0.25], ['A4', 1], ['G4', 1], ['D5', 1], ['C5', 2],
+        // Te de-se-a-mos to-dos
+        ['G4', 0.75], ['G4', 0.25], ['G5', 1], ['E5', 1], ['C5', 1], ['B4', 1], ['A4', 2],
+        // Cum-ple-a-ños fe-liz
+        ['F5', 0.75], ['F5', 0.25], ['E5', 1], ['C5', 1], ['D5', 1], ['C5', 2.5],
+      ];
+
+      const BEAT_DURATION = 0.42; // Segundos por pulso (tempo alegre y dulce)
+
+      let audioCtx = null;
+      let masterGain = null;
+      let isPlaying = false;
+      let isMuted = false;
+      let noteTimer = null;
+      let currentNoteIndex = 0;
+
+      function initAudioContext() {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextClass) return null;
+
+        if (!audioCtx) {
+          audioCtx = new AudioContextClass();
+          masterGain = audioCtx.createGain();
+          masterGain.gain.value = 0.28;
+          masterGain.connect(audioCtx.destination);
+        }
+
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        return audioCtx;
+      }
+
+      /**
+       * Sintetiza una nota cálida tipo cajita musical / celesta
+       */
+      function playNote(freq, durationSec) {
+        if (!audioCtx || !masterGain || isMuted) return;
+
+        const now = audioCtx.currentTime;
+
+        const oscMain = audioCtx.createOscillator();
+        oscMain.type = 'triangle';
+        oscMain.frequency.setValueAtTime(freq, now);
+
+        const oscHarmonic = audioCtx.createOscillator();
+        oscHarmonic.type = 'sine';
+        oscHarmonic.frequency.setValueAtTime(freq * 2, now);
+
+        const noteGain = audioCtx.createGain();
+        const harmonicGain = audioCtx.createGain();
+        harmonicGain.gain.setValueAtTime(0.16, now);
+
+        noteGain.gain.setValueAtTime(0.001, now);
+        noteGain.gain.linearRampToValueAtTime(0.95, now + 0.025);
+        noteGain.gain.exponentialRampToValueAtTime(0.001, now + durationSec * 0.95);
+
+        oscMain.connect(noteGain);
+        oscHarmonic.connect(harmonicGain);
+        harmonicGain.connect(noteGain);
+        noteGain.connect(masterGain);
+
+        oscMain.start(now);
+        oscHarmonic.start(now);
+        oscMain.stop(now + durationSec);
+        oscHarmonic.stop(now + durationSec);
+      }
+
+      function scheduleNextNote() {
+        if (!isPlaying || isMuted) return;
+
+        if (currentNoteIndex >= HAPPY_BIRTHDAY_MELODY.length) {
+          currentNoteIndex = 0;
+          noteTimer = window.setTimeout(scheduleNextNote, 1400);
+          return;
+        }
+
+        const [noteName, beats] = HAPPY_BIRTHDAY_MELODY[currentNoteIndex];
+        const durationSec = beats * BEAT_DURATION;
+
+        playNote(NOTE_FREQ[noteName], durationSec);
+        currentNoteIndex += 1;
+
+        noteTimer = window.setTimeout(scheduleNextNote, durationSec * 1000);
+      }
+
+      function startMusic() {
+        initAudioContext();
+        if (!audioCtx) return;
+
+        isPlaying = true;
+        isMuted = false;
+        clearTimeout(noteTimer);
+        scheduleNextNote();
+        updateAudioUI();
+      }
+
+      function toggleAudio() {
+        initAudioContext();
+        if (!audioCtx) return;
+
+        isMuted = !isMuted;
+
+        if (isMuted) {
+          clearTimeout(noteTimer);
+          if (masterGain) {
+            masterGain.gain.setTargetAtTime(0.0001, audioCtx.currentTime, 0.03);
+          }
+        } else {
+          if (masterGain) {
+            masterGain.gain.setTargetAtTime(0.28, audioCtx.currentTime, 0.03);
+          }
+          isPlaying = true;
+          scheduleNextNote();
+        }
+        updateAudioUI();
+      }
+
+      function updateAudioUI() {
+        iconSoundOn.classList.toggle('hidden', isMuted);
+        iconSoundOff.classList.toggle('hidden', !isMuted);
+        audioToggleBtn.setAttribute('aria-pressed', String(isMuted));
+        audioToggleBtn.setAttribute(
+          'aria-label',
+          isMuted ? 'Reproducir música de cumpleaños' : 'Silenciar música de cumpleaños'
+        );
+        audioLabel.textContent = isMuted ? 'Silenciado' : 'Música';
+      }
+
+      // =========================================================
+      // 2. SISTEMA DE CONFETI MULTICOLOR (canvas-confetti)
+      // =========================================================
+      const CONFETTI_COLORS = [
+        '#FF85B3',
+        '#F5D487',
+        '#E8B954',
+        '#C084FC',
+        '#FB7185',
+        '#38BDF8',
+      ];
+
+      function launchCelebrationConfetti(origin = { x: 0.5, y: 0.55 }) {
+        if (typeof window.confetti !== 'function') return;
+
+        window.confetti({
+          particleCount: 85,
+          spread: 80,
+          startVelocity: 42,
+          origin,
+          colors: CONFETTI_COLORS,
+          scalar: 1.05,
+        });
+
+        window.setTimeout(() => {
+          window.confetti({
+            particleCount: 40,
+            angle: 60,
+            spread: 58,
+            origin: { x: 0, y: 0.65 },
+            colors: CONFETTI_COLORS,
+          });
+          window.confetti({
+            particleCount: 40,
+            angle: 120,
+            spread: 58,
+            origin: { x: 1, y: 0.65 },
+            colors: CONFETTI_COLORS,
+          });
+        }, 180);
+      }
+
+      function launchBurstFromElement(element) {
+        if (typeof window.confetti !== 'function') return;
+        const rect = element.getBoundingClientRect();
+        const origin = {
+          x: (rect.left + rect.width / 2) / window.innerWidth,
+          y: (rect.top + rect.height / 2) / window.innerHeight,
+        };
+        launchCelebrationConfetti(origin);
+      }
+
+      // =========================================================
+      // 3. EVENTOS DE INTERACCIÓN
+      // =========================================================
+      openSurpriseBtn.addEventListener('click', () => {
+        startMusic();
+        launchCelebrationConfetti({ x: 0.5, y: 0.5 });
+
+        welcomeScreen.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+
+        window.setTimeout(() => {
+          welcomeScreen.classList.add('hidden');
+          birthdayCard.classList.remove('hidden');
+          birthdayCard.classList.add('animate-card-reveal');
+          audioToggleBtn.classList.remove('hidden');
+        }, 420);
+      });
+
+      confettiBtn.addEventListener('click', () => {
+        launchCelebrationConfetti({ x: 0.5, y: 0.68 });
+      });
+
+      function handlePhotoCelebrate() {
+        photoFrameBtn.classList.remove('pop-bounce');
+        void photoFrameBtn.offsetWidth;
+        photoFrameBtn.classList.add('pop-bounce');
+        launchBurstFromElement(photoFrameBtn);
+      }
+
+      photoFrameBtn.addEventListener('click', handlePhotoCelebrate);
+      photoFrameBtn.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          handlePhotoCelebrate();
+        }
+      });
+
+      audioToggleBtn.addEventListener('click', toggleAudio);
+    })();
+  </script>
+</body>
+</html>
